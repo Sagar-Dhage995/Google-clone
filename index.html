@@ -1,95 +1,66 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="style.css" rel="stylesheet">
-  <title>Google</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Portfolio Website </title>
 </head>
 
-<body class="w-screen">
-  <nav class="flex text-[14px] justify-between m-4 ">
+<body class="bg-black h-full w-full">
+    <header class="flex mt-10 ml-10 justify-between items-center">
+        <h3 class="text-orange-700 hover:scale-120 transition cursor-pointer text-2xl sm:mt-0 -mt-32 font-bold z-10">Alex</h3>
+        <nav class="text-white flex justify-between items-center mr-120 flex-wrap sm:flex-nowrap sm:ml-0 ml-100 sm:text-base">
+            <a href="#" class="mx-4 hover:text-orange-700 hover:underline z-10">Home</a>
+            <a href="#" class="mx-4 hover:text-orange-700 hover:underline z-10">Services</a>
+            <a href="#" class="mx-4 hover:text-orange-700 hover:underline z-10">Skills</a>
+            <a href="#" class="mx-4 hover:text-orange-700 hover:underline z-10">Education</a>
+            <a href="#" class="mx-4 hover:text-orange-700 hover:underline z-10">Experience</a>
+            <a href="#" class="mx-4 hover:text-orange-700 hover:underline z-10">Contact</a>
+        </nav>
+    </header>
 
-    <div class="">
-      <ul class="flex gap-5">
-        <li class="hover:underline cursor-pointer">About</li>
-        <li class="hover:underline cursor-pointer  mr-2">Store</li>
-      </ul>
-    </div>
+    <main>
+        <div class="text-white flex flex-col pl-10 lg:flex-row lg-pl-10">
 
-    <div class="flex gap-5">
-      <div class="flex">
-        <ul class="flex gap-5">
-          <li class="hover:underline cursor-pointer ">Gmail</li>
-          <li class="hover:underline cursor-pointer ">Images</li>
-        </ul>
-      </div>
+            <img class="-ml-20 h-full w-full lg:w-full sm:mt-0 -mt-40 lg:h-auto" src="img.png" alt="">
 
-      <div class="flex gap-5">
-        <img class="h-6 w-6 opacity-70 cursor-pointer" src="experiment.png" alt="">
-        <img class="h-6 w-6 opacity-70 cursor-pointer" src="menu.png" alt="">
-        <div class="-mt-1">
-          <div class="bg-blue-500 cursor-pointer h-8 w-8 text-white flex justify-center rounded-full ">
-            <p class="mt-1.5 font-medium">S</p>
-          </div>
+            <div class="mt-10 lg:mt-100 lg:-ml-30 mr-5">
+
+                <p class="text-4xl font-bold">Hi, It's <span class="text-orange-700">Alex</span></p>
+                <p class="text-2xl font-bold mt-2">I'm a <span class="text-orange-700">Youtuber</span></p>
+
+                <p class="mt-3 text-gray-300">Lorem ipsum dolor sit amet consectetur adipisicing
+                    elit. Praesentium, explicabo? Fuga,
+                    repellendus? Laborum veritatis culpa quia exercitationem dolore temporibus repellendus non officia
+                    error, corrupti, ratione vitae maxime perferendis nemo ea!</p>
+
+                <div class="mt-7 -ml-3">
+                    <a href="#"><i
+                            class="mx-0.5 cursor-pointer fa-brands fa-instagram text-pink-500 text-2xl ml-4 hover:scale-110 transition"></i></a>
+                    <a href="#"><i
+                            class="mx-0.5 cursor-pointer fa-brands fa-linkedin text-blue-600 text-2xl hover:scale-110 transition"></i></a>
+                    <a href="#"><i
+                            class="mx-0.5 cursor-pointer fa-brands fa-github text-white text-2xl hover:scale-110 transition"></i></a>
+                    <a href="#"><i
+                            class="mx-0.5 cursor-pointer fa-brands fa-x-twitter text-sky-400 text-2xl hover:scale-110 transition"></i></a>
+                    <a href="#"><i
+                            class="mx-0.5 cursor-pointer fa-brands fa-facebook text-blue-600 text-2xl hover:scale-110 transition"></i></a>
+                </div>
+
+                <button
+                    class="mt-6 border cursor-pointer hover:scale-105 transition hover:text-orange-700 font-bold text-orange-800 border-orange-800 border-2 rounded-4xl p-2 px-8">Hire
+                    me</button>
+            </div>
         </div>
-      </div>
-    </div>
-  </nav>
-
-  <div class="flex flex-col items-center justify-center"> <img src="google img.png" class="h-23 mt-50 " alt="">
-
-    <div class="relative flex">
-      <img class="absolute top-11.5 opacity-40 left-6" src="search.png" alt="">
-      <input class="h-13 hover:shadow-sm shadow-gray-300 mt-8  border border-gray-300 rounded-full w-[600px] "
-        type="text">
-      <img class="absolute top-11 opacity-70 left-130" src="mic.png" alt="">
-      <img class="absolute top-11 opacity-70 left-140 " src="camera.png" alt="">
-    </div>
-
-    <div class="mt-7">
-      <button
-        class="bg-gray-100 cursor-pointer hover:shadow-sm m-2  p-2 px-6 rounded-md text-sm">Google
-        Search</button>
-      <button
-        class="bg-gray-100 cursor-pointer hover:shadow-sm m-2 hover:shadow-gray-300  p-2 px-6 rounded-md text-sm">I'm
-        Feeling
-        Lucky</button>
-    </div>
-
-    <div class="mt-8 text-sm flex content-center">
-      <p class="">Google offered in: </p>
-      <p class=" text-blue-800">
-        <a class="hover:underline cursor-pointer" href="#">हिन्दी</a> <a class="hover:underline cursor-pointer"
-          href="#">বাংলা</a> <a class="hover:underline cursor-pointer" href="#">తెలుగు</a> <a
-          class="hover:underline cursor-pointer" href="#">मराठी</a> <a class="hover:underline cursor-pointer"
-          href="#">ગુજરાતી</a> <a class="hover:underline cursor-pointer" href=#">"ಕನ್ನಡ</a> <a
-          class="hover:underline cursor-pointer" href="#">മലയാളം</a> <a class="hover:underline cursor-pointer"
-          href="#">ਪੰਜਾਬੀ</a>
-      </p>
-    </div>
-  </div>
-
-  <div class="h-[48px] bg-gray-100 p-3 pl-7 mt-70">India</div>
-  <hr class="border-gray-300">
-
-  <div class="flex text-[15px] bg-gray-100 justify-between p-3">
-    <div>
-      <ul class="ml-4 flex gap-5">
-        <li class="hover:underline cursor-pointer ">Advertising</li>
-        <li class="hover:underline cursor-pointer ">Buiseness</li>
-        <li class="hover:underline cursor-pointer ">How Search Works</li>
-      </ul>
-    </div>
-    <div>
-      <ul class="flex gap-5 pr-4">
-        <li class="hover:underline cursor-pointer ">Privacy</li>
-        <li class="hover:underline cursor-pointer ">Terms</li>
-        <li class="hover:underline cursor-pointer ">Settings</li>
-      </ul>
-    </div>
-  </div>
+    </main><a>
 
 </body>
 
