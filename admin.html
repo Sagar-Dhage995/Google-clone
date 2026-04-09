@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | कर्तृत्ववान शेतकरी</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="shetkarilogo.jpg">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase-config.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans Devanagari',sans-serif;background:#f0f4f1;min-height:100vh}
+/* ─ Topbar ─ */
+.a-top{background:#052e0f;color:#fff;padding:14px 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:3px solid #e07b1a}
+.a-top h1{font-size:1.15rem;display:flex;align-items:center;gap:10px}
+.a-top h1 img{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.a-top-links{display:flex;gap:.8rem;align-items:center}
+.a-top-links a{color:rgba(255,255,255,.7);font-size:.82rem;text-decoration:none;padding:5px 12px;border-radius:50px;border:1px solid rgba(255,255,255,.2);transition:.3s}
+.a-top-links a:hover{color:#fff;border-color:rgba(255,255,255,.5)}
+/* ─ Layout ─ */
+.a-wrap{max-width:1200px;margin:0 auto;padding:2rem 1.5rem}
+/* ─ Auth Gate ─ */
+.gate-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#052e0f,#0f6b28)}
+.gate-card{background:#fff;border-radius:20px;padding:2.5rem;max-width:380px;width:100%;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.3)}
+.gate-card h2{font-size:1.5rem;color:#052e0f;margin:.5rem 0 .3rem}
+.gate-card p{font-size:.82rem;color:#888;margin-bottom:1.5rem}
+.gate-input{width:100%;padding:12px 16px;border:2px solid #ddd;border-radius:10px;font-size:.92rem;outline:none;margin-bottom:.8rem;transition:.3s}
+.gate-input:focus{border-color:#0f6b28}
+.gate-btn{width:100%;padding:12px;border-radius:10px;background:linear-gradient(135deg,#0f6b28,#22a045);color:#fff;font-size:1rem;font-weight:800;cursor:pointer;border:none;transition:all .3s}
+.gate-btn:hover{transform:translateY(-2px)}
+.gate-err{color:#dc2626;font-size:.82rem;margin-top:.5rem}
+/* ─ Section headers ─ */
+.sec{margin-bottom:2.5rem}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:1.2rem;font-family:'Noto Sans Devanagari',sans-serif}
+.sec-head h2{font-size:1.25rem;color:#052e0f}
+.sec-head span{font-size:.78rem;color:#888;margin-left:auto}
+/* ─ Stat Cards ─ */
+.stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:1rem;margin-bottom:2rem}
+@media(max-width:900px){.stats-row{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:500px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+.stat{background:#fff;border-radius:14px;padding:1.2rem 1rem;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid #e8e8e8;transition:all .3s}
+.stat:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.stat .icon{font-size:1.8rem;margin-bottom:.4rem}
+.stat .num{font-size:2rem;font-weight:800;color:#0f6b28;line-height:1}
+.stat .lbl{font-size:.72rem;color:#888;margin-top:.3rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.stat.highlight .num{color:#e07b1a}
+/* ─ Chart ─ */
+.chart-card{background:#fff;border-radius:14px;padding:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:2rem}
+.chart-title{font-size:.9rem;font-weight:700;color:#333;margin-bottom:1rem;display:flex;align-items:center;gap:6px}
+.chart-wrap{position:relative;height:220px;overflow:hidden}
+.bar-chart{display:flex;align-items:flex-end;gap:4px;height:100%;padding-bottom:24px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
+.bar{width:100%;background:linear-gradient(180deg,#22a045,#0f6b28);border-radius:4px 4px 0 0;transition:height .6s ease;min-height:2px;position:relative;cursor:default}
+.bar:hover::after{content:attr(data-val);position:absolute;top:-22px;left:50%;transform:translateX(-50%);background:#052e0f;color:#fff;padding:2px 7px;border-radius:4px;font-size:.7rem;white-space:nowrap;pointer-events:none}
+.bar-lbl{font-size:.58rem;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:center}
+/* ─ Tables ─ */
+.tbl-card{background:#fff;border-radius:14px;padding:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:2rem;overflow:hidden}
+.tbl-wrap{overflow-x:auto;margin-top:.8rem}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{background:#f0f4f1;color:#052e0f;padding:10px 14px;text-align:left;font-weight:800;border-bottom:2px solid #d0e8d5;white-space:nowrap}
+td{padding:9px 14px;border-bottom:1px solid #f0f0f0;color:#333;vertical-align:middle}
+tr:last-child td{border:none}
+tr:hover td{background:#f9fdf9}
+.badge{display:inline-block;padding:2px 10px;border-radius:50px;font-size:.72rem;font-weight:700}
+.badge-green{background:#e6f7eb;color:#0f6b28}
+.badge-orange{background:#fff0e0;color:#b45309}
+/* ─ Add Newspaper ─ */
+.add-card{background:#fff;border-radius:14px;padding:1.8rem;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:2rem;border:2px dashed #e07b1a;position:relative}
+.add-card::before{content:'🔐 Owner Only';position:absolute;top:-13px;left:20px;background:#e07b1a;color:#fff;padding:2px 14px;border-radius:50px;font-size:.7rem;font-weight:900}
+.add-row{display:flex;gap:.8rem;flex-wrap:wrap;align-items:flex-end;margin-top:.8rem}
+.add-input{flex:1;min-width:180px;padding:10px 14px;border:2px solid #ddd;border-radius:10px;font-family:inherit;font-size:.88rem;outline:none;transition:.3s}
+.add-input:focus{border-color:#e07b1a}
+.pick-btn{display:flex;align-items:center;gap:6px;padding:10px 18px;border-radius:10px;background:linear-gradient(135deg,#0f6b28,#22a045);color:#fff;font-size:.86rem;font-weight:800;cursor:pointer;border:none;font-family:inherit;transition:all .3s;white-space:nowrap}
+.pick-btn:hover{transform:translateY(-2px)}
+.pick-btn.selected{background:linear-gradient(135deg,#e07b1a,#f59332)}
+.add-btn{padding:10px 22px;border-radius:10px;background:linear-gradient(135deg,#e07b1a,#f59332);color:#fff;font-size:.86rem;font-weight:800;cursor:pointer;border:none;font-family:inherit;transition:all .3s;white-space:nowrap}
+.add-btn:hover{transform:translateY(-2px)}
+.add-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.file-lbl{font-size:.78rem;color:#0f6b28;background:#f0faf3;border:1px solid #22a045;padding:6px 12px;border-radius:8px;display:none;align-items:center;gap:5px}
+.add-msg{margin-top:.6rem;font-size:.82rem;padding:.5rem .8rem;border-radius:8px;display:none}
+.add-msg.ok{background:#e8f5eb;color:#0f6b28;border:1px solid #22a045;display:block}
+.add-msg.err{background:#fee2e2;color:#991b1b;border:1px solid #f87171;display:block}
+/* ─ Newspaper list ─ */
+.np-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+.np-item{background:#f9fdf9;border:1px solid #d0e8d5;border-radius:12px;padding:1rem;display:flex;align-items:center;gap:.8rem;transition:.3s}
+.np-item:hover{box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.np-img{width:56px;height:40px;border-radius:6px;object-fit:cover;background:#e0f0e6;flex-shrink:0}
+.np-meta h4{font-size:.88rem;font-weight:700;color:#052e0f;line-height:1.3}
+.np-meta p{font-size:.74rem;color:#888;margin-top:2px}
+.np-del{margin-left:auto;background:#fee2e2;color:#dc2626;border:none;padding:5px 10px;border-radius:6px;font-size:.74rem;font-weight:700;cursor:pointer;transition:.3s;flex-shrink:0}
+.np-del:hover{background:#dc2626;color:#fff}
+/* ─ Loading ─ */
+.loading{text-align:center;padding:3rem;color:#aaa;font-size:.92rem}
+/* ─ Realtime badge ─ */
+.rt-badge{display:inline-flex;align-items:center;gap:5px;background:#e6f7eb;color:#0f6b28;border:1px solid #22a045;padding:3px 10px;border-radius:50px;font-size:.72rem;font-weight:700}
+.rt-dot{width:7px;height:7px;background:#22a045;border-radius:50%;animation:rtPulse 1.5s infinite}
+@keyframes rtPulse{0%,100%{opacity:1}50%{opacity:.3}}
+/* ─ Tabs ─ */
+.tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.tab{padding:8px 20px;border-radius:50px;font-size:.84rem;font-weight:700;cursor:pointer;border:2px solid #ddd;background:#fff;color:#666;transition:.3s;font-family:inherit}
+.tab.active,.tab:hover{background:#0f6b28;color:#fff;border-color:#0f6b28}
+</style>
+</head>
+<body>
+
+<!-- AUTH GATE -->
+<div id="gate" class="gate-wrap">
+  <div class="gate-card">
+    <img src="shetkarilogo.jpg" alt="Logo" style="width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid #e6f7eb;margin:0 auto .8rem">
+    <h2>Admin Dashboard</h2>
+    <p>कर्तृत्ववान शेतकरी — Owner Access</p>
+    <input type="password" id="gate-pass" class="gate-input" placeholder="Admin password टाका" autocomplete="current-password">
+    <button class="gate-btn" onclick="checkPass()">🔓 प्रवेश करा</button>
+    <div id="gate-err" class="gate-err"></div>
+    <a href="index.html" style="display:block;margin-top:1rem;color:#888;font-size:.8rem">← मुख्य Website</a>
+  </div>
+</div>
+
+<!-- ADMIN PANEL (hidden until authenticated) -->
+<div id="admin-panel" style="display:none">
+
+  <!-- Top Bar -->
+  <div class="a-top">
+    <h1>
+      <img src="shetkarilogo.jpg" alt="Logo">
+      Admin Dashboard — कर्तृत्ववान शेतकरी
+    </h1>
+    <div class="a-top-links">
+      <span class="rt-badge"><span class="rt-dot"></span>Live</span>
+      <a href="index.html" target="_blank">🌐 Website पहा</a>
+      <a href="#" onclick="doLogoutAdmin()">🚪 Logout</a>
+    </div>
+  </div>
+
+  <div class="a-wrap">
+
+    <!-- SB Status Banner -->
+    <div id="sb-status-banner" style="background:#fff8f0;border:1px solid #e07b1a;border-radius:10px;padding:.8rem 1.2rem;margin-bottom:1.5rem;font-size:.84rem;color:#7a3500;display:none">
+      ⚠️ <strong>Supabase configured नाही.</strong> <code>supabase-config.js</code> मध्ये URL + anon key टाका — मग analytics आणि realtime काम करेल.
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('analytics')">📊 Analytics</button>
+      <button class="tab" onclick="switchTab('newspapers')">📰 Newspapers</button>
+      <button class="tab" onclick="switchTab('users')">👥 Users</button>
+    </div>
+
+    <!-- ══════ TAB: ANALYTICS ══════ -->
+    <div id="tab-analytics">
+
+      <!-- Stat Cards -->
+      <div class="stats-row" id="stats-row">
+        <div class="stat"><div class="icon">📅</div><div class="num" id="s-today">—</div><div class="lbl">आज</div></div>
+        <div class="stat"><div class="icon">📆</div><div class="num" id="s-week">—</div><div class="lbl">आठवडा</div></div>
+        <div class="stat"><div class="icon">🗓️</div><div class="num" id="s-month">—</div><div class="lbl">महिना</div></div>
+        <div class="stat"><div class="icon">📅</div><div class="num" id="s-year">—</div><div class="lbl">वर्ष</div></div>
+        <div class="stat highlight"><div class="icon">🔢</div><div class="num" id="s-total">—</div><div class="lbl">एकूण Logins</div></div>
+        <div class="stat highlight"><div class="icon">👥</div><div class="num" id="s-unique">—</div><div class="lbl">Unique Users</div></div>
+      </div>
+
+      <!-- Daily Bar Chart -->
+      <div class="chart-card">
+        <div class="chart-title">📈 Daily Logins — गेल्या ३० दिवस</div>
+        <div class="chart-wrap">
+          <div class="bar-chart" id="daily-chart"><div class="loading">⏳ Chart लोड होत आहे...</div></div>
+        </div>
+      </div>
+
+      <!-- Weekly Bar Chart -->
+      <div class="chart-card">
+        <div class="chart-title">📊 Weekly Logins — गेल्या १२ आठवडे</div>
+        <div class="chart-wrap">
+          <div class="bar-chart" id="weekly-chart"><div class="loading">⏳ Chart लोड होत आहे...</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══════ TAB: NEWSPAPERS ══════ -->
+    <div id="tab-newspapers" style="display:none">
+
+      <!-- Add Newspaper -->
+      <div class="add-card">
+        <h3 style="font-size:1.1rem;color:#7a3500;display:flex;align-items:center;gap:7px;margin-bottom:.5rem">➕ नवीन अंक जोडा</h3>
+        <p style="font-size:.8rem;color:#aaa">PDF file निवडा → Supabase वर upload होईल → Website automatically update होईल ✅</p>
+        <div class="add-row">
+          <input type="text" id="a-title" class="add-input" placeholder="अंकाचे नाव (कर्तृत्ववान शेतकरी – अंक ७)">
+          <input type="text" id="a-date"  class="add-input" placeholder="तारीख (१३ मे २०२५)" style="max-width:180px">
+          <input type="file" id="a-pdf"   accept=".pdf" style="display:none">
+          <input type="file" id="a-thumb" accept="image/*" style="display:none">
+          <button class="pick-btn" id="a-pick" onclick="document.getElementById('a-pdf').click()">📂 PDF निवडा</button>
+          <button class="pick-btn" id="a-thumb-pick" style="background:linear-gradient(135deg,#6b4c0f,#a07020)" onclick="document.getElementById('a-thumb').click()">🖼️ Thumbnail (optional)</button>
+          <img id="a-thumb-preview" style="width:54px;height:40px;border-radius:8px;object-fit:cover;border:2px solid #22a045;display:none">
+          <button class="add-btn" id="a-add" onclick="adminAddPaper()">✅ अंक जोडा</button>
+        </div>
+        <div class="file-lbl" id="a-file-lbl"></div>
+        <div class="add-msg" id="a-msg"></div>
+      </div>
+
+      <!-- Newspaper List -->
+      <div class="sec">
+        <div class="sec-head"><h2>📰 सर्व अंक</h2><span id="np-count"></span></div>
+        <div id="np-list" class="np-grid"><div class="loading">⏳ लोड होत आहे...</div></div>
+      </div>
+    </div>
+
+    <!-- ══════ TAB: USERS ══════ -->
+    <div id="tab-users" style="display:none">
+      <div class="tbl-card">
+        <div class="sec-head"><h2>👥 Recent Logins</h2><span id="user-count"></span></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Email</th><th>नाव</th><th>Login वेळ</th><th>Device</th></tr></thead>
+            <tbody id="users-tbody"><tr><td colspan="5" style="text-align:center;color:#aaa;padding:2rem">⏳ Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /a-wrap -->
+</div><!-- /admin-panel -->
+
+<script>
+// ── Password ──
+const ADMIN_PASS = 'shetkari2025'; // ← बदलायचे असल्यास येथे नवीन password टाका
+let _file = null;
+
+function checkPass(){
+  const v = document.getElementById('gate-pass').value;
+  if (v === ADMIN_PASS) {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    localStorage.setItem('ks_admin','yes');
+    initDashboard();
+  } else {
+    document.getElementById('gate-err').textContent = '❌ Password चुकीचे आहे.';
+  }
+}
+document.getElementById('gate-pass')?.addEventListener('keydown', e => { if(e.key==='Enter') checkPass(); });
+if (localStorage.getItem('ks_admin')==='yes') { document.getElementById('gate').style.display='none'; document.getElementById('admin-panel').style.display='block'; initDashboard(); }
+
+function doLogoutAdmin(){ localStorage.removeItem('ks_admin'); location.reload(); }
+
+// ── Tabs ──
+function switchTab(name){
+  ['analytics','newspapers','users'].forEach(t=>{
+    document.getElementById(`tab-${t}`).style.display = t===name?'block':'none';
+    document.querySelectorAll('.tab')[['analytics','newspapers','users'].indexOf(t)].classList.toggle('active',t===name);
+  });
+}
+
+// ── Init Dashboard ──
+async function initDashboard(){
+  if (!window.SB?.isReady()) {
+    document.getElementById('sb-status-banner').style.display='block';
+    loadNPFallback();
+    return;
+  }
+  await Promise.all([loadAnalytics(), loadNP(), loadUsers()]);
+}
+
+// ── Analytics ──
+async function loadAnalytics(){
+  const d = await window.SB.analytics();
+  if (!d) return;
+  document.getElementById('s-today').textContent  = d.today;
+  document.getElementById('s-week').textContent   = d.week;
+  document.getElementById('s-month').textContent  = d.month;
+  document.getElementById('s-year').textContent   = d.year;
+  document.getElementById('s-total').textContent  = d.total;
+  document.getElementById('s-unique').textContent = d.unique;
+  drawBarChart('daily-chart',  d.dailyMap,  'दिवस');
+  drawBarChart('weekly-chart', d.weekMap,   'आठवडा');
+}
+
+function drawBarChart(id, dataMap, label){
+  const el = document.getElementById(id);
+  if (!el) return;
+  const entries = Object.entries(dataMap);
+  if (!entries.length) { el.innerHTML='<div style="color:#aaa;padding:2rem;text-align:center">📭 Data नाही</div>'; return; }
+  const max = Math.max(...entries.map(e=>e[1]), 1);
+  el.innerHTML = entries.map(([k, v]) => {
+    const pct = Math.round((v/max)*100);
+    const shortK = k.length>10 ? k.slice(5) : k;
+    return `<div class="bar-col"><div class="bar" style="height:${Math.max(pct,3)}%" data-val="${v}"></div><div class="bar-lbl">${shortK}</div></div>`;
+  }).join('');
+}
+
+// ── Users Table ──
+async function loadUsers(){
+  const d = await window.SB.analytics();
+  if (!d) return;
+  document.getElementById('user-count').textContent = `${d.recent.length} recent`;
+  const tbody = document.getElementById('users-tbody');
+  if (!d.recent.length) { tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:#aaa;padding:2rem">📭 कोणीही Login केले नाही अजून.</td></tr>'; return; }
+  tbody.innerHTML = d.recent.map((u,i) => {
+    const t = new Date(u.logged_at).toLocaleString('mr-IN');
+    const device = (u.user_agent||'').includes('Mobile') ? '📱 Mobile' : '💻 Desktop';
+    return `<tr><td style="color:#aaa">${i+1}</td><td><strong>${u.email}</strong></td><td>${u.name||'—'}</td><td style="font-size:.78rem;color:#666">${t}</td><td><span class="badge badge-green">${device}</span></td></tr>`;
+  }).join('');
+}
+
+// ── Newspapers ──
+async function loadNP(){
+  const data = await window.SB.fetch();
+  if (!data) { loadNPFallback(); return; }
+  document.getElementById('np-count').textContent = `${data.length} अंक`;
+  renderNPList(data);
+}
+
+function loadNPFallback(){
+  const list = document.getElementById('np-list');
+  if(list) list.innerHTML='<div class="loading">⚠️ Supabase configured नाही. Demo mode.</div>';
+}
+
+function renderNPList(papers){
+  const el = document.getElementById('np-list');
+  if (!el) return;
+  if (!papers.length) { el.innerHTML='<div class="loading">📭 कोणतेही अंक नाहीत. वर form मधून जोडा.</div>'; return; }
+  el.innerHTML = papers.map(p=>`
+    <div class="np-item">
+      <img class="np-img" src="${p.thumb_url||'https://placehold.co/56x40/0f6b28/fff?text=PDF'}" onerror="this.src='https://placehold.co/56x40/0f6b28/fff?text=PDF'">
+      <div class="np-meta">
+        <h4>${p.title}</h4>
+        <p>📅 ${p.date_text} ${p.pdf_url?'<span class="badge badge-green">PDF ✓</span>':''}</p>
+      </div>
+      <button class="np-del" onclick="adminDelNP(${p.id})">🗑️</button>
+    </div>`).join('');
+}
+
+// Realtime for admin too
+if (window.SB?.isReady()) {
+  window.SB.subscribe(
+    p => { showAdminToast(`📰 नवीन: ${p.title}`); loadNP(); },
+    p => { loadNP(); }
+  );
+}
+
+// ── Admin Add Newspaper ──
+document.getElementById('a-pdf')?.addEventListener('change', () => {
+  const f = document.getElementById('a-pdf').files[0];
+  if (!f || f.type!=='application/pdf') { adminMsg('❌ PDF file निवडा.','err'); return; }
+  _file = f;
+  const pb = document.getElementById('a-pick'), fl = document.getElementById('a-file-lbl');
+  if(pb){pb.classList.add('selected');pb.innerHTML=`✅ ${f.name.slice(0,18)}${f.name.length>18?'…':''}`;}
+  if(fl){fl.textContent=`📄 ${f.name} (${(f.size/1024).toFixed(0)} KB)`;fl.style.display='flex';}
+});
+
+document.getElementById('a-thumb')?.addEventListener('change', () => {
+  const f = document.getElementById('a-thumb').files[0];
+  if (!f) return;
+  const tb = document.getElementById('a-thumb-pick'), prv = document.getElementById('a-thumb-preview');
+  if (tb) { tb.style.background='linear-gradient(135deg,#0f6b28,#22a045)'; tb.innerHTML='🖼️ ' + f.name.slice(0,16); }
+  if (prv) { prv.src = URL.createObjectURL(f); prv.style.display='block'; }
+});
+
+async function adminAddPaper(){
+  const title = document.getElementById('a-title').value.trim();
+  const date  = document.getElementById('a-date').value.trim();
+  if (!title){ adminMsg('❌ नाव टाका.','err'); return; }
+  if (!date) { adminMsg('❌ तारीख टाका.','err'); return; }
+  if (!_file){ adminMsg('❌ PDF file निवडा.','err'); return; }
+  if (!window.SB?.isReady()){ adminMsg('❌ Supabase configured नाही.','err'); return; }
+  const ab = document.getElementById('a-add'); if(ab){ab.disabled=true;ab.textContent='⏳ Upload...';}
+  try{
+    adminMsg('📤 Supabase Storage वर PDF upload होत आहे...','ok');
+    const url = await window.SB.uploadPDF(_file);
+    // Thumbnail upload (optional)
+    let thumbUrl = '';
+    const tFile = document.getElementById('a-thumb')?.files[0];
+    if (tFile) {
+      const tName = `thumbs/${Date.now()}_${tFile.name.replace(/\s+/g,'_')}`;
+      const sbC = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+      const { error: tErr } = await sbC.storage.from('newspapers-pdfs').upload(tName, tFile, {contentType:tFile.type,upsert:false});
+      if (!tErr) thumbUrl = sbC.storage.from('newspapers-pdfs').getPublicUrl(tName).data.publicUrl;
+    }
+    await window.SB.insert({ title, date_text:date, description:`${title} — ${date}`, pdf_url:url, thumb_url:thumbUrl });
+    adminMsg(`✅ "${title}" successfully add झाला! Website realtime update होईल.`,'ok');
+    _file=null;
+    document.getElementById('a-title').value=''; document.getElementById('a-date').value='';
+    document.getElementById('a-pdf').value='';
+    const pb=document.getElementById('a-pick'); if(pb){pb.classList.remove('selected');pb.innerHTML='📂 PDF निवडा';}
+    const fl=document.getElementById('a-file-lbl'); if(fl)fl.style.display='none';
+    if(ab){ab.disabled=false;ab.textContent='✅ अंक जोडा';}
+    loadNP();
+  }catch(err){
+    adminMsg(`❌ Error: ${err.message}`,'err');
+    if(ab){ab.disabled=false;ab.textContent='✅ अंक जोडा';}
+  }
+}
+
+async function adminDelNP(id){
+  if(!confirm('हा अंक permanently delete करायचा का?'))return;
+  if(!window.SB?.isReady()){adminMsg('❌ Supabase not configured','err');return;}
+  try{
+    await window.SB.delete(id);
+    showAdminToast('🗑️ अंक delete झाला.');
+    loadNP();
+  }catch(err){showAdminToast('❌ '+err.message);}
+}
+
+function adminMsg(msg,type){
+  const el=document.getElementById('a-msg');if(!el)return;
+  el.textContent=msg;el.className=`add-msg ${type}`;
+  clearTimeout(el._t);el._t=setTimeout(()=>{el.style.display='none';el.className='add-msg';},8000);
+}
+
+function showAdminToast(msg){
+  let t=document.getElementById('a-toast');
+  if(!t){t=document.createElement('div');t.id='a-toast';t.style.cssText='position:fixed;bottom:2rem;right:2rem;background:#052e0f;color:#fff;padding:10px 20px;border-radius:50px;font-size:.85rem;font-weight:600;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.3);transition:all .3s;opacity:0';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',3500);
+}
+</script>
+</body>
+</html>

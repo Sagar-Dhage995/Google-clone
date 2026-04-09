@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | कर्तृत्ववान शेतकरी</title>
+  <meta name="description" content="कर्तृत्ववान शेतकरी — Login करा">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌾</text></svg>">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .login-topbar{
+      position:fixed;top:0;left:0;right:0;
+      background:rgba(5,46,15,.95);backdrop-filter:blur(12px);
+      padding:12px 2rem;display:flex;align-items:center;justify-content:space-between;
+      z-index:100;border-bottom:2px solid rgba(224,123,26,.35);
+    }
+    .login-topbar .brand{display:flex;align-items:center;gap:8px;color:#fff;font-family:var(--font-heading);font-size:1.05rem}
+    .login-topbar .brand em{color:var(--gold-l);font-style:normal}
+    .login-page-wrap{padding-top:65px}
+  </style>
+</head>
+<body>
+
+<div class="login-topbar">
+  <a href="index.html" class="brand">🌾 <em>कर्तृत्ववान</em> शेतकरी</a>
+  <span id="login-date" style="color:rgba(255,255,255,.5);font-size:.78rem"></span>
+</div>
+
+<div class="login-page-wrap">
+  <div class="login-split">
+    <!-- Info Panel -->
+    <div class="login-info-panel">
+      <div style="font-size:3.5rem;margin-bottom:1rem">🌾</div>
+      <h2><em>कर्तृत्ववान</em> शेतकरी<br>सदस्य व्हा</h2>
+      <p>महाराष्ट्रातील शेतकऱ्यांसाठी विश्वासू माहितीचा स्रोत. Login करा आणि सर्व साप्ताहिक अंक मोफत वाचा.</p>
+      <div style="margin-top:1.5rem">
+        <div class="login-benefit"><span class="icon">📰</span><p>सर्व साप्ताहिक अंक PDF मध्ये</p></div>
+        <div class="login-benefit"><span class="icon">📺</span><p>YouTube Videos — शेती माहिती</p></div>
+        <div class="login-benefit"><span class="icon">🌾</span><p>सरकारी योजना आणि बाजारभाव</p></div>
+        <div class="login-benefit"><span class="icon">🔔</span><p>नवीन अंक आल्यावर notification</p></div>
+      </div>
+    </div>
+
+    <!-- Login Card -->
+    <div class="login-card">
+      <div class="login-logo-row">
+        <img src="shetkarilogo.jpg" alt="Logo" style="width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid #e6f7eb;animation:logoFadeZoom .6s cubic-bezier(.34,1.56,.64,1) both">
+        <h2>Login करा</h2>
+        <p>तुमचा Email टाका — Confirmation Link पाठवतो</p>
+      </div>
+
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label for="login-email">📧 Email Address *</label>
+          <input type="email" id="login-email" class="form-input"
+                 placeholder="yourname@gmail.com" autocomplete="email" required>
+        </div>
+        <button type="submit" class="form-submit" id="login-btn">
+          🚀 Login करा
+        </button>
+        <div id="login-msg" class="form-msg"></div>
+        <div class="form-features">
+          <div class="f-feat"><div class="dot">🔒</div><span>Password नाही — Email Link द्वारे Login</span></div>
+          <div class="f-feat"><div class="dot">📧</div><span>User + Admin ला confirmation email</span></div>
+          <div class="f-feat"><div class="dot">✅</div><span>एकदा login — session save</span></div>
+        </div>
+      </form>
+
+      <a href="index.html" class="back-link">← परत मुख्यपृष्ठावर</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="login.js"></script>
+</body>
+</html>
