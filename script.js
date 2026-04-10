@@ -334,12 +334,26 @@ async function loadAndRender() {
   if (grid) grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#aaa">⏳ लोड होत आहे...</div>';
 
   var sbP = [];
-  if (window.SB && window.SB.isReady()) {
-    var res = await window.SB.fetch();
-    if (res) sbP = res.map(function (p) {
-      return Object.assign({}, p, { date: p.date_text, pdf: p.pdf_url, thumbnail: p.thumb_url || '', _sb: true });
-    });
-  }
+  // Try Supabase — wait a moment for CDN to load if needed
+  try {
+    if (window.SB && window.SB.isReady()) {
+      var res = await window.SB.fetch();
+      if (res && res.length >= 0) {
+        sbP = res.map(function (p) {
+          return Object.assign({}, p, { date: p.date_text, pdf: p.pdf_url, thumbnail: p.thumb_url || '', _sb: true });
+        });
+      }
+    } else if (window.SUPABASE_URL && window.SUPABASE_URL !== 'YOUR_SUPABASE_PROJECT_URL' && window.supabase) {
+      // Direct Supabase call if window.SB not ready yet
+      var _c = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+      var _r = await _c.from('newspapers').select('*').order('created_at', { ascending: false });
+      if (_r.data) {
+        sbP = _r.data.map(function (p) {
+          return Object.assign({}, p, { date: p.date_text, pdf: p.pdf_url, thumbnail: p.thumb_url || '', _sb: true });
+        });
+      }
+    }
+  } catch (e) { console.warn('Supabase load:', e.message); }
 
   var idbP = [];
   try { idbP = (await idbAll()).reverse().map(function (p) { return Object.assign({}, p, { _idb: true }); }); } catch (e) {}
