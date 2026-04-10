@@ -3,7 +3,7 @@
 // YouTube API + Horizontal Scroll Row
 // ═══════════════════════════════════════════════════
 
-const YT_API_KEY    = 'AIzaSyChaay8FKxy9d4LPsQB0mgiYcYB9MxcE20';
+const YT_API_KEY    = 'AIzaSyDmNyOeZg2BFsiaLnbCO_-RYRvdYTZKa5o';
 const YT_CHANNEL_ID = 'UCIFfq0fE7BKofwGe4wax6Eg';
 const YT_MAX        = 18; // fetch 18 videos
 
